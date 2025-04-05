@@ -9,9 +9,10 @@
 
 body {
   background-image: url("../img/céu_noite.jpg");
-  background-position: center;
+  background-position: bottom;
   background-size: cover;
   background-attachment: fixed;
+  background-repeat: no-repeat;
 }
 
 button {
