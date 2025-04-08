@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OrganizaAí</title>
   <link rel="stylesheet" href="css/styles.css">
-  <!--Font Awesome-->
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <script src="js/scripts.js" defer></script>
 </head>
@@ -15,35 +15,43 @@
   <div class="todo-container">
     <header>
       <h1>OrganizaAí</h1>
+      <div class="theme-toggle-wrapper">
+        <button id="toggle-theme" aria-label="Alternar tema claro/escuro">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+      </div>
     </header>
+
     <form id="todo-form">
       <p>Adicione a sua tarefa:</p>
       <div class="form-control">
-        <input type="text" id="todo-input" placeholder="O que você vai fazer?">
+        <input type="text" id="todo-input" placeholder="Digite uma nova tarefa..." autocomplete="off">
         <button type="submit">
           <i class="fa-solid fa-plus"></i>
         </button>
       </div>
     </form>
+
     <form id="edit-form" class="hide">
       <p>Edite a sua tarefa:</p>
       <div class="form-control">
-        <input type="text" id="edit-input">
+        <input type="text" id="edit-input" autocomplete="off">
         <button type="submit">
           <i class="fa-solid fa-check-double"></i>
         </button>
       </div>
       <button id="cancel-edit-btn">Cancelar</button>
     </form>
+
     <div id="toolbar">
       <div id="search">
         <h4>Pesquisar</h4>
-        <form>
-          <input type="text" id="search-input" placeholder="Buscar...">
-          <button id="erase-button">
+        <div>
+          <input type="text" id="search-input" placeholder="Buscar..." autocomplete="off">
+          <button id="erase-button" type="button">
             <i class="fa-solid fa-delete-left"></i>
           </button>
-        </form>
+        </div>
       </div>
       <div id="filter">
         <h4>Filtrar:</h4>
@@ -54,9 +62,8 @@
         </select>
       </div>
     </div>
-    <div id="todo-list">
 
-    </div>
+    <div id="todo-list"></div>
   </div>
 </body>
 

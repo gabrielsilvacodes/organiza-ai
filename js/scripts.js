@@ -1,4 +1,4 @@
-// seleção de elementos
+// ========== SELEÇÃO DE ELEMENTOS ==========
 const todoForm = document.querySelector("#todo-form");
 const todoInput = document.querySelector("#todo-input");
 const todoList = document.querySelector("#todo-list");
@@ -8,43 +8,78 @@ const cancelEditBtn = document.querySelector("#cancel-edit-btn");
 const searchInput = document.querySelector("#search-input");
 const eraseBtn = document.querySelector("#erase-button");
 const filterSelect = document.querySelector("#filter-select");
+const toggleThemeBtn = document.querySelector("#toggle-theme");
 
 let oldInputValue;
 
-// Funções
-const saveTodo = (text, done = false, save = true) => {
+// ========== FUNÇÕES DE TEMA ==========
+const applyStoredTheme = () => {
+  const theme = localStorage.getItem("theme");
+  const icon = toggleThemeBtn.querySelector("i");
+
+  if (theme === "dark") {
+    document.body.classList.add("dark");
+    icon.classList.replace("fa-moon", "fa-sun");
+  }
+};
+
+const toggleTheme = () => {
+  const isDark = document.body.classList.toggle("dark");
+  const icon = toggleThemeBtn.querySelector("i");
+
+  icon.classList.replace(
+    isDark ? "fa-moon" : "fa-sun",
+    isDark ? "fa-sun" : "fa-moon"
+  );
+  localStorage.setItem("theme", isDark ? "dark" : "light");
+};
+
+// ========== FUNÇÕES DE LOCALSTORAGE ==========
+const getTodosFromLocalStorage = () =>
+  JSON.parse(localStorage.getItem("todos")) || [];
+
+const saveTodoToLocalStorage = (todo) => {
+  const todos = getTodosFromLocalStorage();
+  todos.push(todo);
+  localStorage.setItem("todos", JSON.stringify(todos));
+};
+
+const removeTodoFromLocalStorage = (text) => {
+  const todos = getTodosFromLocalStorage().filter((todo) => todo.text !== text);
+  localStorage.setItem("todos", JSON.stringify(todos));
+};
+
+const updateTodoStatusInLocalStorage = (text) => {
+  const todos = getTodosFromLocalStorage().map((todo) => {
+    if (todo.text === text) todo.done = !todo.done;
+    return todo;
+  });
+  localStorage.setItem("todos", JSON.stringify(todos));
+};
+
+const updateTodoTextInLocalStorage = (oldText, newText) => {
+  const todos = getTodosFromLocalStorage().map((todo) => {
+    if (todo.text === oldText) todo.text = newText;
+    return todo;
+  });
+  localStorage.setItem("todos", JSON.stringify(todos));
+};
+
+// ========== FUNÇÕES DE MANIPULAÇÃO DE DOM ==========
+const createTodoElement = (text, done = false, save = true) => {
   const todo = document.createElement("div");
   todo.classList.add("todo");
+  if (done) todo.classList.add("done");
 
-  const todoTitle = document.createElement("h3");
-  todoTitle.innerText = text;
-  todo.appendChild(todoTitle);
-
-  const doneBtn = document.createElement("button");
-  doneBtn.classList.add("finish-todo");
-  doneBtn.innerHTML = '<i class="fa-solid fa-check"></i>';
-  todo.appendChild(doneBtn);
-
-  const editBtn = document.createElement("button");
-  editBtn.classList.add("edit-todo");
-  editBtn.innerHTML = '<i class="fa-solid fa-pen"></i>';
-  todo.appendChild(editBtn);
-
-  const deleteBtn = document.createElement("button");
-  deleteBtn.classList.add("remove-todo");
-  deleteBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
-  todo.appendChild(deleteBtn);
-
-  if (done) {
-    todo.classList.add("done");
-  }
-
-  if (save) {
-    saveTodoLocalStorage({ text, done });
-  }
+  todo.innerHTML = `
+    <h3>${text}</h3>
+    <button class="finish-todo"><i class="fa-solid fa-check"></i></button>
+    <button class="edit-todo"><i class="fa-solid fa-pen"></i></button>
+    <button class="remove-todo"><i class="fa-solid fa-xmark"></i></button>
+  `;
 
   todoList.appendChild(todo);
-
+  if (save) saveTodoToLocalStorage({ text, done });
   todoInput.value = "";
   todoInput.focus();
 };
@@ -55,191 +90,110 @@ const toggleForms = () => {
   todoList.classList.toggle("hide");
 };
 
-const updateTodo = (text) => {
-  const todos = document.querySelectorAll(".todo");
-
-  todos.forEach((todo) => {
-    let todoTitle = todo.querySelector("h3");
-
-    if (
-      todoTitle.innerText.trim().toLowerCase() ===
-      oldInputValue.trim().toLowerCase()
-    ) {
-      todoTitle.innerText = text;
+const updateTodoText = (newText) => {
+  document.querySelectorAll(".todo").forEach((todo) => {
+    const title = todo.querySelector("h3");
+    if (title.innerText === oldInputValue) {
+      title.innerText = newText;
     }
   });
 };
 
-const getSearchedTodos = (search) => {
-  const todos = document.querySelectorAll(".todo");
-
-  todos.forEach((todo) => {
-    const todoTitle = todo.querySelector("h3").innerText.toLowerCase();
-
-    if (todoTitle.includes(search.toLowerCase())) {
-      todo.style.display = "flex";
-    } else {
-      todo.style.display = "none";
-    }
+const filterTodos = (filter) => {
+  document.querySelectorAll(".todo").forEach((todo) => {
+    const isDone = todo.classList.contains("done");
+    todo.style.display =
+      filter === "all" ||
+      (filter === "done" && isDone) ||
+      (filter === "todo" && !isDone)
+        ? "flex"
+        : "none";
   });
 };
 
-const filterTodos = (filterValue) => {
-  const todos = document.querySelectorAll(".todo");
-
-  switch (filterValue) {
-    case "all":
-      todos.forEach((todo) => (todo.style.display = "flex"));
-
-      break;
-
-    case "done":
-      todos.forEach((todo) =>
-        todo.classList.contains("done")
-          ? (todo.style.display = "flex")
-          : (todo.style.display = "none")
-      );
-
-      break;
-
-    case "todo":
-      todos.forEach((todo) =>
-        !todo.classList.contains("done")
-          ? (todo.style.display = "flex")
-          : (todo.style.display = "none")
-      );
-
-      break;
-
-    default:
-      break;
-  }
+const searchTodos = (search) => {
+  document.querySelectorAll(".todo").forEach((todo) => {
+    const title = todo.querySelector("h3").innerText.toLowerCase();
+    todo.style.display = title.includes(search.toLowerCase()) ? "flex" : "none";
+  });
 };
-// Eventos
+
+// ========== FUNÇÃO DE CARREGAMENTO ==========
+const loadTodos = () => {
+  getTodosFromLocalStorage().forEach(({ text, done }) => {
+    createTodoElement(text, done, false);
+  });
+};
+
+// ========== EVENTOS ==========
 todoForm.addEventListener("submit", (e) => {
   e.preventDefault();
-
-  const inputValue = todoInput.value;
-
-  if (inputValue) {
-    saveTodo(inputValue);
-  }
+  const text = todoInput.value.trim();
+  if (text) createTodoElement(text);
 });
 
 document.addEventListener("click", (e) => {
-  const targetEl = e.target;
-  const parentEl = targetEl.closest(".todo");
-  let todoTitle;
+  const el = e.target;
+  const todo = el.closest(".todo");
+  if (!todo) return;
 
-  if (parentEl && parentEl.querySelector("h3")) {
-    todoTitle = parentEl.querySelector("h3").innerHTML;
+  const title = todo.querySelector("h3").innerText;
+
+  if (el.classList.contains("finish-todo")) {
+    todo.classList.toggle("done");
+    updateTodoStatusInLocalStorage(title);
   }
 
-  if (targetEl.classList.contains("finish-todo")) {
-    parentEl.classList.toggle("done");
-    updateTodoStatusLocalStorage(todoTitle);
+  if (el.classList.contains("remove-todo")) {
+    todo.remove();
+    removeTodoFromLocalStorage(title);
   }
 
-  if (targetEl.classList.contains("remove-todo")) {
-    parentEl.remove();
-    removeTodoLocalStorage(todoTitle);
-  }
-
-  if (targetEl.classList.contains("edit-todo")) {
+  if (el.classList.contains("edit-todo")) {
     toggleForms();
+    editInput.value = title;
+    oldInputValue = title;
 
-    editInput.value = todoTitle;
-    oldInputValue = todoTitle;
+    document
+      .querySelectorAll(".editing")
+      .forEach((el) => el.classList.remove("editing"));
+    todo.classList.add("editing");
   }
-});
-
-cancelEditBtn.addEventListener("click", (e) => {
-  e.preventDefault();
-
-  toggleForms();
 });
 
 editForm.addEventListener("submit", (e) => {
   e.preventDefault();
-
-  const editInputValue = editInput.value;
-
-  if (editInputValue) {
-    updateTodo(editInputValue);
-    updateTodoLocalStorage(oldInputValue, editInputValue); //
+  const newText = editInput.value.trim();
+  if (newText) {
+    updateTodoText(newText);
+    updateTodoTextInLocalStorage(oldInputValue, newText);
   }
-
   toggleForms();
+  document.querySelector(".editing")?.classList.remove("editing");
+});
+
+cancelEditBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  toggleForms();
+  document.querySelector(".editing")?.classList.remove("editing");
 });
 
 searchInput.addEventListener("keyup", (e) => {
-  const search = e.target.value;
-
-  getSearchedTodos(search);
+  searchTodos(e.target.value);
 });
 
 eraseBtn.addEventListener("click", (e) => {
   e.preventDefault();
-
   searchInput.value = "";
-
-  searchInput.dispatchEvent(new Event("keyup"));
+  searchTodos("");
 });
 
 filterSelect.addEventListener("change", (e) => {
-  const filterValue = e.target.value;
-
-  filterTodos(filterValue);
+  filterTodos(e.target.value);
 });
 
-const getTodosLocalStorage = () => {
-  const todos = JSON.parse(localStorage.getItem("todos")) || [];
+toggleThemeBtn.addEventListener("click", toggleTheme);
 
-  return todos;
-};
-
-const loadTodos = () => {
-  const todos = getTodosLocalStorage();
-
-  todos.forEach((todo) => {
-    saveTodo(todo.text, todo.done, 0);
-  });
-};
-
-const saveTodoLocalStorage = (todo) => {
-  const todos = getTodosLocalStorage();
-
-  todos.push(todo);
-
-  localStorage.setItem("todos", JSON.stringify(todos));
-};
-
-const removeTodoLocalStorage = (todoText) => {
-  const todos = getTodosLocalStorage();
-
-  const filteredTodos = todos.filter((todo) => todo.text != todoText);
-
-  localStorage.setItem("todos", JSON.stringify(filteredTodos));
-};
-
-const updateTodoStatusLocalStorage = (todoText) => {
-  const todos = getTodosLocalStorage();
-
-  todos.forEach((todo) =>
-    todo.text === todoText ? (todo.done = !todo.done) : null
-  );
-
-  localStorage.setItem("todos", JSON.stringify(todos));
-};
-
-const updateTodoLocalStorage = (todoOldText, todoNewText) => {
-  const todos = getTodosLocalStorage();
-
-  todos.map((todo) =>
-    todo.text === todoOldText ? (todo.text = todoNewText) : null
-  );
-
-  localStorage.setItem("todos", JSON.stringify(todos));
-};
-
+// ========== INICIALIZAÇÃO ==========
+applyStoredTheme();
 loadTodos();
