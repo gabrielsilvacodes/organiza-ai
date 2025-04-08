@@ -1,10 +1,16 @@
-/*geral*/
+/* GERAL */
 * {
   padding: 0;
   margin: 0;
-  font-family: helvetica;
+  font-family: "Inter", "Segoe UI", helvetica, sans-serif;
   color: #333;
   box-sizing: border-box;
+  transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease;
+}
+
+:focus-visible {
+  outline: 2px dashed #ff9900;
+  outline-offset: 3px;
 }
 
 body {
@@ -38,14 +44,14 @@ button:focus {
   outline: 2px solid #0056b3;
 }
 
-button:hover > i {
-  color: #fff;
-}
-
 button i {
   color: #102f5e;
   font-weight: bold;
   pointer-events: none;
+}
+
+button:hover > i {
+  color: #fff;
 }
 
 input,
@@ -57,7 +63,7 @@ select {
   display: none;
 }
 
-/*Todo header*/
+/* HEADER */
 .todo-container {
   max-width: 450px;
   margin: 3rem auto;
@@ -74,7 +80,7 @@ select {
   border-bottom: 1px solid #ccc;
 }
 
-/*todo form*/
+/* FORMULÁRIOS */
 #todo-form,
 #edit-form {
   padding: 1rem;
@@ -114,7 +120,7 @@ select {
   color: #fff;
 }
 
-/* Todo toolbar*/
+/* TOOLBAR */
 #toolbar {
   padding: 1rem;
   border-bottom: 1px solid #ccc;
@@ -152,7 +158,29 @@ select {
   flex: 1;
 }
 
-/* Todo List */
+/* LISTA DE TAREFAS */
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutSlide {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+}
+
 .todo {
   display: flex;
   justify-content: space-between;
@@ -160,9 +188,13 @@ select {
   align-items: center;
   padding: 1rem;
   border-bottom: 1px solid #ddd;
-  transition: 0.3s;
   background-color: #f7f7f7;
   border-radius: 8px;
+  animation: fadeInSlide 0.3s ease forwards;
+}
+
+.todo.removing {
+  animation: fadeOutSlide 0.25s ease forwards;
 }
 
 #todo-list {
@@ -196,7 +228,25 @@ select {
   box-shadow: 0 0 6px rgba(16, 47, 94, 0.3);
 }
 
-/* MODO ESCURO - DARK MODE */
+/* BOTÃO LIMPAR TUDO */
+.clear-all {
+  margin: 1rem auto 0;
+  display: block;
+  background-color: #e74c3c;
+  color: white;
+  border: 2px solid #c0392b;
+  border-radius: 6px;
+  padding: 0.6rem 1.2rem;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.clear-all:hover {
+  background-color: #c0392b;
+  transform: scale(1.05);
+}
+
+/* MODO ESCURO */
 .theme-toggle-wrapper {
   display: flex;
   justify-content: flex-end;
@@ -207,13 +257,11 @@ body.dark {
   color: #f0f0f0;
 }
 
-/* Container principal */
 body.dark .todo-container {
   background-color: rgba(42, 42, 42, 0.95);
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
 }
 
-/* Títulos e textos */
 body.dark h1,
 body.dark h3,
 body.dark p,
@@ -223,20 +271,18 @@ body.dark #filter h4 {
   color: #f0f0f0;
 }
 
-/* Input e select */
 body.dark input,
-body.dark select {
+body.dark select,
+body.dark select option {
   background-color: #444;
-  color: #fff;
+  color: #f0f0f0;
   border: 1px solid #666;
 }
 
-/* Placeholder */
 body.dark input::placeholder {
   color: #bbb;
 }
 
-/* Botões */
 body.dark button {
   background-color: #333;
   color: #f0f0f0;
@@ -251,7 +297,6 @@ body.dark button i {
   color: #f0f0f0;
 }
 
-/* Lista de tarefas pendentes */
 body.dark .todo {
   background-color: #3b3b3b;
 }
@@ -260,7 +305,6 @@ body.dark .todo h3 {
   color: #fff;
 }
 
-/* Lista de tarefas concluídas */
 body.dark .done {
   background-color: #34495e;
 }
@@ -269,38 +313,6 @@ body.dark .done h3 {
   color: #fff;
   text-decoration: line-through;
   font-style: italic;
-}
-
-/* Transição suave de temas */
-body,
-.todo-container,
-input,
-select,
-button,
-.todo,
-#search h4,
-#filter h4,
-h1,
-h3,
-p {
-  transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease;
-}
-
-#toggle-theme {
-  margin-bottom: 1rem;
-  align-self: flex-end;
-  background-color: transparent;
-  border: 2px solid #102f5e;
-  padding: 0.4rem;
-  border-radius: 6px;
-}
-
-#toggle-theme i {
-  transition: transform 0.3s ease;
-}
-
-#toggle-theme:hover i {
-  transform: rotate(180deg);
 }
 
 body.dark #cancel-edit-btn {
@@ -313,27 +325,79 @@ body.dark #cancel-edit-btn:hover {
   color: #fff;
 }
 
-body.dark select {
-  background-color: #444;
-  color: #f0f0f0;
-  border: 1px solid #666;
-}
-
-body.dark select option {
-  background-color: #444;
-  color: #f0f0f0;
-}
-
 body.dark .editing {
   outline: 2px dashed #f0f0f0;
   background-color: #2a4053;
   box-shadow: 0 0 6px rgba(255, 255, 255, 0.1);
 }
 
+body.dark .clear-all {
+  background-color: #a93226;
+  border-color: #922b21;
+}
+
+body.dark .clear-all:hover {
+  background-color: #922b21;
+}
+
+/* AVISO DE CAMPO VAZIO */
+.warning-text {
+  color: #d63031;
+  font-size: 0.9rem;
+  margin-top: 0.4rem;
+  display: block;
+  opacity: 1;
+  transition: opacity 0.3s ease, height 0.3s ease;
+}
+
+.hide.warning-text {
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* RESPONSIVO */
 @media (max-width: 500px) {
   .todo-container {
     margin: 1rem;
     padding: 1rem;
+  }
+
+  #toggle-theme {
+    margin-top: 0.5rem;
+  }
+
+  #toolbar {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  #search,
+  #filter {
+    width: 100%;
+    border-right: none;
+    padding-right: 0;
+    margin-right: 0;
+  }
+
+  .form-control {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-control input,
+  .form-control button {
+    width: 100%;
+  }
+
+  #clear-all-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .todo-container {
+    margin: 2rem;
   }
 
   #toolbar {
@@ -347,5 +411,21 @@ body.dark .editing {
     border-right: none;
     padding-right: 0;
     margin-right: 0;
+  }
+}
+
+@media (max-width: 1024px) {
+  .todo-container {
+    margin: 2rem auto;
+    padding: 1.5rem;
+  }
+
+  #toolbar {
+    gap: 2rem;
+  }
+
+  #search,
+  #filter {
+    width: 50%;
   }
 }

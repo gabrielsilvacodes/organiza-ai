@@ -1,4 +1,4 @@
-// ========== SELEÇÃO DE ELEMENTOS ==========
+// ========== SELEÇÃO DE ELEMENTOS ========== //
 const todoForm = document.querySelector("#todo-form");
 const todoInput = document.querySelector("#todo-input");
 const todoList = document.querySelector("#todo-list");
@@ -9,10 +9,11 @@ const searchInput = document.querySelector("#search-input");
 const eraseBtn = document.querySelector("#erase-button");
 const filterSelect = document.querySelector("#filter-select");
 const toggleThemeBtn = document.querySelector("#toggle-theme");
+const clearAllBtn = document.querySelector("#clear-all-btn");
 
 let oldInputValue;
 
-// ========== FUNÇÕES DE TEMA ==========
+// ========== FUNÇÕES DE TEMA ========== //
 const applyStoredTheme = () => {
   const theme = localStorage.getItem("theme");
   const icon = toggleThemeBtn.querySelector("i");
@@ -34,19 +35,22 @@ const toggleTheme = () => {
   localStorage.setItem("theme", isDark ? "dark" : "light");
 };
 
-// ========== FUNÇÕES DE LOCALSTORAGE ==========
+// ========== LOCAL STORAGE ========== //
 const getTodosFromLocalStorage = () =>
   JSON.parse(localStorage.getItem("todos")) || [];
+
+const setTodosToLocalStorage = (todos) =>
+  localStorage.setItem("todos", JSON.stringify(todos));
 
 const saveTodoToLocalStorage = (todo) => {
   const todos = getTodosFromLocalStorage();
   todos.push(todo);
-  localStorage.setItem("todos", JSON.stringify(todos));
+  setTodosToLocalStorage(todos);
 };
 
 const removeTodoFromLocalStorage = (text) => {
   const todos = getTodosFromLocalStorage().filter((todo) => todo.text !== text);
-  localStorage.setItem("todos", JSON.stringify(todos));
+  setTodosToLocalStorage(todos);
 };
 
 const updateTodoStatusInLocalStorage = (text) => {
@@ -54,7 +58,7 @@ const updateTodoStatusInLocalStorage = (text) => {
     if (todo.text === text) todo.done = !todo.done;
     return todo;
   });
-  localStorage.setItem("todos", JSON.stringify(todos));
+  setTodosToLocalStorage(todos);
 };
 
 const updateTodoTextInLocalStorage = (oldText, newText) => {
@@ -62,10 +66,10 @@ const updateTodoTextInLocalStorage = (oldText, newText) => {
     if (todo.text === oldText) todo.text = newText;
     return todo;
   });
-  localStorage.setItem("todos", JSON.stringify(todos));
+  setTodosToLocalStorage(todos);
 };
 
-// ========== FUNÇÕES DE MANIPULAÇÃO DE DOM ==========
+// ========== DOM MANIPULATION ========== //
 const createTodoElement = (text, done = false, save = true) => {
   const todo = document.createElement("div");
   todo.classList.add("todo");
@@ -118,18 +122,27 @@ const searchTodos = (search) => {
   });
 };
 
-// ========== FUNÇÃO DE CARREGAMENTO ==========
 const loadTodos = () => {
   getTodosFromLocalStorage().forEach(({ text, done }) => {
     createTodoElement(text, done, false);
   });
 };
 
-// ========== EVENTOS ==========
+// ========== EVENTOS ========== //
 todoForm.addEventListener("submit", (e) => {
   e.preventDefault();
-  const text = todoInput.value.trim();
-  if (text) createTodoElement(text);
+
+  const inputValue = todoInput.value.trim();
+  const warning = document.querySelector("#input-warning");
+
+  if (!inputValue) {
+    warning.classList.remove("hide");
+    setTimeout(() => warning.classList.add("hide"), 2500);
+    return;
+  }
+
+  warning.classList.add("hide");
+  createTodoElement(inputValue);
 });
 
 document.addEventListener("click", (e) => {
@@ -145,7 +158,8 @@ document.addEventListener("click", (e) => {
   }
 
   if (el.classList.contains("remove-todo")) {
-    todo.remove();
+    todo.classList.add("removing");
+    setTimeout(() => todo.remove(), 250);
     removeTodoFromLocalStorage(title);
   }
 
@@ -178,9 +192,7 @@ cancelEditBtn.addEventListener("click", (e) => {
   document.querySelector(".editing")?.classList.remove("editing");
 });
 
-searchInput.addEventListener("keyup", (e) => {
-  searchTodos(e.target.value);
-});
+searchInput.addEventListener("keyup", (e) => searchTodos(e.target.value));
 
 eraseBtn.addEventListener("click", (e) => {
   e.preventDefault();
@@ -188,12 +200,25 @@ eraseBtn.addEventListener("click", (e) => {
   searchTodos("");
 });
 
-filterSelect.addEventListener("change", (e) => {
-  filterTodos(e.target.value);
-});
+filterSelect.addEventListener("change", (e) => filterTodos(e.target.value));
 
 toggleThemeBtn.addEventListener("click", toggleTheme);
 
-// ========== INICIALIZAÇÃO ==========
+clearAllBtn.addEventListener("click", () => {
+  if (confirm("Tem certeza que deseja remover todas as tarefas?")) {
+    const todos = document.querySelectorAll(".todo");
+    todos.forEach((todo, index) => {
+      todo.classList.add("fade-out");
+      setTimeout(() => {
+        todo.remove();
+        if (index === todos.length - 1) {
+          localStorage.removeItem("todos");
+        }
+      }, 400);
+    });
+  }
+});
+
+// ========== INICIALIZAÇÃO ========== //
 applyStoredTheme();
 loadTodos();

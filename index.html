@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OrganizaAí</title>
   <link rel="stylesheet" href="css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <script src="js/scripts.js" defer></script>
@@ -21,49 +22,54 @@
         </button>
       </div>
     </header>
-
-    <form id="todo-form">
-      <p>Adicione a sua tarefa:</p>
-      <div class="form-control">
-        <input type="text" id="todo-input" placeholder="Digite uma nova tarefa..." autocomplete="off">
-        <button type="submit">
-          <i class="fa-solid fa-plus"></i>
-        </button>
-      </div>
-    </form>
-
-    <form id="edit-form" class="hide">
-      <p>Edite a sua tarefa:</p>
-      <div class="form-control">
-        <input type="text" id="edit-input" autocomplete="off">
-        <button type="submit">
-          <i class="fa-solid fa-check-double"></i>
-        </button>
-      </div>
-      <button id="cancel-edit-btn">Cancelar</button>
-    </form>
-
-    <div id="toolbar">
-      <div id="search">
-        <h4>Pesquisar</h4>
-        <div>
-          <input type="text" id="search-input" placeholder="Buscar..." autocomplete="off">
-          <button id="erase-button" type="button">
-            <i class="fa-solid fa-delete-left"></i>
+    <main>
+      <form id="todo-form">
+        <p>Adicione a sua tarefa:</p>
+        <div class="form-control">
+          <input type="text" id="todo-input" placeholder="Digite uma nova tarefa..." autocomplete="off">
+          <button type="submit">
+            <i class="fa-solid fa-plus"></i>
           </button>
         </div>
-      </div>
-      <div id="filter">
-        <h4>Filtrar:</h4>
-        <select id="filter-select">
-          <option value="all">Todos</option>
-          <option value="done">Concluídos</option>
-          <option value="todo">Pendentes</option>
-        </select>
-      </div>
-    </div>
+        <small id="input-warning" class="hide warning-text">Por favor, preencha a tarefa.</small>
+      </form>
 
-    <div id="todo-list"></div>
+      <form id="edit-form" class="hide">
+        <p>Edite a sua tarefa:</p>
+        <div class="form-control">
+          <input type="text" id="edit-input" autocomplete="off">
+          <button type="submit">
+            <i class="fa-solid fa-check-double"></i>
+          </button>
+        </div>
+        <button id="cancel-edit-btn">Cancelar</button>
+      </form>
+
+      <div id="toolbar">
+        <div id="search">
+          <h4>Pesquisar</h4>
+          <div>
+            <input type="text" id="search-input" placeholder="Buscar..." autocomplete="off">
+            <button id="erase-button" type="button">
+              <i class="fa-solid fa-delete-left"></i>
+            </button>
+          </div>
+        </div>
+        <div id="filter">
+          <h4>Filtrar:</h4>
+          <select id="filter-select">
+            <option value="all">Todos</option>
+            <option value="done">Concluídos</option>
+            <option value="todo">Pendentes</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="todo-list"></div>
+      <section aria-label="Ações gerais">
+        <button id="clear-all-btn" class="clear-all">Limpar Tudo</button>
+      </section>
+    </main>
   </div>
 </body>
 
