@@ -52,7 +52,7 @@ organiza-ai/
 1. Clone o repositório:
 
    ```bash
-   git clone https://github.com/seu-usuario/organiza-ai.git
+   git clone https://github.com/gabrielsilvacodes/organiza-ai.git
    ```
 
 2. Navegue até a pasta do projeto:
@@ -80,12 +80,6 @@ O layout se adapta a diferentes tamanhos de tela, com media queries específicas
 ## 🌙 Modo Escuro
 
 O tema escuro é ativado com um botão no canto superior. A escolha do tema é salva automaticamente no **localStorage** e mantida na próxima visita.
-
----
-
-## 📷 Demonstração (opcional)
-
-Você pode incluir aqui um link para um vídeo curto ou uma imagem gif demonstrando a aplicação em funcionamento.
 
 ---
 
